@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vida Saudável</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {font-family: Arial;margin:0;background:#a8e063;}
+.menu {display:flex;justify-content:space-around;padding:10px;background:#ddd;}
+.tela {display:none;padding:20px;}
+.tela.ativa {display:block;}
+.box {background:white;padding:20px;margin:auto;max-width:400px;border-radius:10px;text-align:center;}
+</style>
+</head>
+
+<body>
+
+<div class="menu">
+<button onclick="mostrar('imc')">IMC</button>
+<button onclick="mostrar('calorias')">Calorias</button>
+<button onclick="mostrar('agua')">Água</button>
+<button onclick="mostrar('info')">Como funciona</button>
+</div>
+
+<div id="imc" class="tela ativa">
+<div class="box">
+<h3>IMC</h3>
+<input type="number" id="peso" placeholder="Peso">
+<input type="number" id="altura" placeholder="Altura">
+<button onclick="calcularIMC()">Calcular</button>
+<div id="resIMC"></div>
+<canvas id="chart"></canvas>
+</div>
+</div>
+
+<div id="calorias" class="tela">
+<div class="box">
+<h3>Calorias</h3>
+<input id="pesoCal" placeholder="Peso">
+<input id="alturaCal" placeholder="Altura">
+<input id="idade" placeholder="Idade">
+<button onclick="calcularCalorias()">Calcular</button>
+<div id="resCal"></div>
+</div>
+</div>
+
+<div id="agua" class="tela">
+<div class="box">
+<h3>Água</h3>
+<input id="pesoAgua" placeholder="Peso">
+<button onclick="calcularAgua()">Calcular</button>
+<div id="resAgua"></div>
+</div>
+</div>
+
+<div id="info" class="tela">
+<div class="box">
+<h3>Como funciona</h3>
+
+<p><b>IMC:</b> peso ÷ altura²</p>
+<p><b>Água:</b> peso × 35</p>
+<p><b>Calorias:</b> 10×peso + 6.25×altura - 5×idade + 5</p>
+
+<hr>
+
+<p><b>Gráfico:</b></p>
+<p>Mostra os valores de IMC calculados ao longo do tempo.</p>
+
+<p><b>Média:</b> soma dos IMCs ÷ quantidade</p>
+<p><b>Moda:</b> valor que mais se repete</p>
+<p><b>Mediana:</b> valor central dos dados ordenados</p>
+
+</div>
+</div>
+
+<footer style="text-align:center;margin-top:20px;">
+<img src="logo.png" width="100"><br>
+Feito por Lucas Borges
+</footer>
+
+<script>
+function mostrar(id){
+document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+document.getElementById(id).classList.add('ativa');
+}
+
+let dados=[];
+let cores=[];
+let ctx=document.getElementById('chart').getContext('2d');
+
+let chart=new Chart(ctx,{
+type:'bar',
+data:{labels:[],datasets:[{data:dados,backgroundColor:cores}]}
+});
+
+function calcularIMC(){
+let p=document.getElementById('peso').value;
+let a=document.getElementById('altura').value;
+let imc=p/(a*a);
+
+document.getElementById('resIMC').innerHTML="IMC: "+imc.toFixed(2);
+
+let cor="green";
+if(imc<18.5) cor="blue";
+else if(imc<25) cor="green";
+else if(imc<30) cor="orange";
+else cor="red";
+
+dados.push(imc.toFixed(2));
+cores.push(cor);
+chart.data.labels.push("R"+dados.length);
+chart.update();
+}
+
+function calcularCalorias(){
+let p=document.getElementById('pesoCal').value;
+let a=document.getElementById('alturaCal').value;
+let i=document.getElementById('idade').value;
+let cal=(10*p+6.25*a-5*i+5);
+document.getElementById('resCal').innerHTML=Math.floor(cal)+" kcal";
+}
+
+function calcularAgua(){
+let p=document.getElementById('pesoAgua').value;
+let agua=p*35;
+document.getElementById('resAgua').innerHTML=(agua/1000).toFixed(2)+"L";
+}
+</script>
+
+</body>
+</html>
