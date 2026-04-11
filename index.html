@@ -4,47 +4,208 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vida Saudável</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-body {font-family: Arial;margin:0;background:#a8e063;}
-.menu {display:flex;justify-content:space-around;padding:10px;background:#ddd;}
-.tela {display:none;padding:20px;}
-.tela.ativa {display:block;}
-.box {background:white;padding:20px;margin:auto;max-width:400px;border-radius:10px;text-align:center;}
+:root {
+    --bg: linear-gradient(135deg, #1c1c1e, #2c2c2e);
+    --glass: rgba(255,255,255,0.08);
+    --text: #fff;
+}
+
+body {
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* header */
+.header{
+    text-align:center;
+    padding:20px;
+    font-size:22px;
+    font-weight:600;
+}
+
+/* menu */
+.menu{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.menu button{
+    padding:8px 14px;
+    border-radius:20px;
+    border:none;
+    background:var(--glass);
+    backdrop-filter:blur(15px);
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.menu button:hover{
+    transform:scale(1.05);
+}
+
+/* telas */
+.tela{
+    display:none;
+    padding:20px;
+    animation:fade 0.5s ease;
+}
+
+.tela.ativa{display:block;}
+
+@keyframes fade{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1;}
+}
+
+/* box */
+.box{
+    max-width:420px;
+    margin:auto;
+    padding:25px;
+    border-radius:25px;
+    background:var(--glass);
+    backdrop-filter:blur(25px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    text-align:center;
+}
+
+/* inputs */
+input, select{
+    width:90%;
+    padding:12px;
+    margin:8px;
+    border:none;
+    border-radius:15px;
+    background:rgba(255,255,255,0.15);
+    color:white;
+}
+
+/* botão */
+button{
+    padding:10px 15px;
+    border-radius:15px;
+    border:none;
+    background:white;
+    color:black;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(0.95);
+}
+
+/* resultado */
+.resultado{
+    margin-top:10px;
+    font-weight:bold;
+    font-size:16px;
+}
+
+/* stats */
+.stats{
+    margin-top:10px;
+    font-size:14px;
+    opacity:0.8;
+}
+
+/* tabela */
+table{
+    width:100%;
+    margin-top:10px;
+    border-collapse:collapse;
+}
+
+td,th{
+    padding:6px;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+/* cards */
+.calc-card{
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    margin:10px 0;
+    border-radius:15px;
+    text-align:left;
+    transition:0.3s;
+}
+
+.calc-card:hover{
+    transform:scale(1.02);
+    background:rgba(255,255,255,0.08);
+}
+
+.calc-title{
+    font-weight:bold;
+    margin-bottom:5px;
+}
 </style>
 </head>
 
 <body>
 
+<div class="header">🌱 Vida Saudável</div>
+
 <div class="menu">
 <button onclick="mostrar('imc')">IMC</button>
 <button onclick="mostrar('calorias')">Calorias</button>
 <button onclick="mostrar('agua')">Água</button>
-<button onclick="mostrar('info')">Como funciona</button>
+<button onclick="mostrar('info')">Cálculos</button>
 </div>
 
+<!-- IMC -->
 <div id="imc" class="tela ativa">
 <div class="box">
+
 <h3>IMC</h3>
-<input type="number" id="peso" placeholder="Peso">
-<input type="number" id="altura" placeholder="Altura">
+
+<input type="number" id="peso" placeholder="Peso (kg)">
+<input type="number" id="altura" placeholder="Altura (m)">
 <button onclick="calcularIMC()">Calcular</button>
-<div id="resIMC"></div>
+
+<div id="resIMC" class="resultado"></div>
+
 <canvas id="chart"></canvas>
+
+<div id="stats" class="stats"></div>
+
+<table>
+<tr><th>IMC</th><th>Classificação</th></tr>
+<tr><td style="color:#4da3ff">&lt;18.5</td><td>Abaixo</td></tr>
+<tr><td style="color:#4caf50">18.5-24.9</td><td>Normal</td></tr>
+<tr><td style="color:#ff9800">25-29.9</td><td>Sobrepeso</td></tr>
+<tr><td style="color:#ff3b30">30+</td><td>Obesidade</td></tr>
+</table>
+
 </div>
 </div>
 
+<!-- CALORIAS -->
 <div id="calorias" class="tela">
 <div class="box">
 <h3>Calorias</h3>
 <input id="pesoCal" placeholder="Peso">
 <input id="alturaCal" placeholder="Altura">
 <input id="idade" placeholder="Idade">
+<select id="atividade">
+<option value="1.2">Sedentário</option>
+<option value="1.55">Moderado</option>
+<option value="1.9">Ativo</option>
+</select>
 <button onclick="calcularCalorias()">Calcular</button>
 <div id="resCal"></div>
 </div>
 </div>
 
+<!-- AGUA -->
 <div id="agua" class="tela">
 <div class="box">
 <h3>Água</h3>
@@ -54,30 +215,73 @@ body {font-family: Arial;margin:0;background:#a8e063;}
 </div>
 </div>
 
+<!-- CALCULOS (AGORA COM SUA VERSÃO COMPLETA) -->
 <div id="info" class="tela">
 <div class="box">
-<h3>Como funciona</h3>
 
-<p><b>IMC:</b> peso ÷ altura²</p>
-<p><b>Água:</b> peso × 35</p>
-<p><b>Calorias:</b> 10×peso + 6.25×altura - 5×idade + 5</p>
+<h3>Cálculos</h3>
 
-<hr>
+<div class="calc-card">
+<div class="calc-title">IMC</div>
+<p><b>Fórmula:</b> peso ÷ altura²</p>
+<p>Você divide o peso (kg) pela altura (m) ao quadrado.</p>
+<p>Exemplo: 70 ÷ (1.75 × 1.75) = 22.86</p>
+<p>Esse valor é usado para classificar seu peso (normal, sobrepeso, etc).</p>
+</div>
 
-<p><b>Gráfico:</b></p>
-<p>Mostra os valores de IMC calculados ao longo do tempo.</p>
+<div class="calc-card">
+<div class="calc-title">Média</div>
+<p><b>Fórmula:</b> soma ÷ quantidade</p>
+<p>Somamos todos os valores e dividimos pela quantidade total.</p>
+<p>Exemplo: (20 + 22 + 24) ÷ 3 = 22</p>
+<p>Mostra o valor “geral” dos seus resultados.</p>
+</div>
 
-<p><b>Média:</b> soma dos IMCs ÷ quantidade</p>
-<p><b>Moda:</b> valor que mais se repete</p>
-<p><b>Mediana:</b> valor central dos dados ordenados</p>
+<div class="calc-card">
+<div class="calc-title">Mediana</div>
+<p>Ordenamos os números do menor para o maior.</p>
+<p>Depois pegamos o valor do meio.</p>
+<p>Exemplo: 20, 22, 24 → mediana = 22</p>
+<p>Se tiver número par: fazemos a média dos dois do meio.</p>
+</div>
+
+<div class="calc-card">
+<div class="calc-title">Moda</div>
+<p>É o valor que mais se repete.</p>
+<p>Exemplo: 20, 22, 22, 24 → moda = 22</p>
+<p>Mostra o valor mais frequente.</p>
+</div>
+
+<div class="calc-card">
+<div class="calc-title">Gráfico de IMC</div>
+<p>Cada vez que você calcula o IMC, um novo valor é adicionado.</p>
+<p>Cada barra representa um cálculo feito.</p>
+<p>As cores indicam a classificação:</p>
+<p style="color:#4da3ff;">Azul = abaixo do peso</p>
+<p style="color:#4caf50;">Verde = normal</p>
+<p style="color:#ff9800;">Laranja = sobrepeso</p>
+<p style="color:#ff3b30;">Vermelho = obesidade</p>
+<p>Assim você consegue ver sua evolução ao longo do tempo.</p>
+</div>
+
+<div class="calc-card">
+<div class="calc-title">Calorias</div>
+<p><b>Fórmula:</b> 10×peso + 6.25×altura - 5×idade + 5</p>
+<p>Isso calcula sua taxa metabólica basal (TMB).</p>
+<p>Depois multiplicamos pelo nível de atividade.</p>
+<p>Resultado = calorias que você gasta por dia.</p>
+</div>
+
+<div class="calc-card">
+<div class="calc-title">Água</div>
+<p><b>Fórmula:</b> peso × 35ml</p>
+<p>Multiplicamos seu peso por 35.</p>
+<p>Depois convertemos para litros (÷1000).</p>
+<p>Resultado = quantidade ideal diária de água.</p>
+</div>
 
 </div>
 </div>
-
-<footer style="text-align:center;margin-top:20px;">
-<img src="logo.png" width="100"><br>
-Feito por Lucas Borges
-</footer>
 
 <script>
 function mostrar(id){
@@ -85,46 +289,89 @@ document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
 document.getElementById(id).classList.add('ativa');
 }
 
-let dados=[];
-let cores=[];
+let lista=[], labels=[], cores=[];
 let ctx=document.getElementById('chart').getContext('2d');
 
-let chart=new Chart(ctx,{
+let grafico=new Chart(ctx,{
 type:'bar',
-data:{labels:[],datasets:[{data:dados,backgroundColor:cores}]}
+data:{labels:labels,datasets:[{data:lista,backgroundColor:cores}]},
+options:{animation:{duration:800}}
 });
 
+function atualizarStats(){
+if(lista.length===0){stats.innerHTML="";return;}
+
+let nums=lista.map(Number).sort((a,b)=>a-b);
+
+let media=nums.reduce((a,b)=>a+b,0)/nums.length;
+
+let mediana=nums.length%2?
+nums[Math.floor(nums.length/2)]:
+(nums[nums.length/2-1]+nums[nums.length/2])/2;
+
+let freq={}, moda=nums[0], max=0;
+
+nums.forEach(n=>{
+freq[n]=(freq[n]||0)+1;
+if(freq[n]>max){max=freq[n];moda=n;}
+});
+
+stats.innerHTML=`Média: ${media.toFixed(2)} | Mediana: ${mediana} | Moda: ${moda}`;
+}
+
+function classificarIMC(imc){
+if(imc<18.5) return ["Abaixo do peso","#4da3ff"];
+if(imc<25) return ["Peso normal","#4caf50"];
+if(imc<30) return ["Sobrepeso","#ff9800"];
+return ["Obesidade","#ff3b30"];
+}
+
 function calcularIMC(){
-let p=document.getElementById('peso').value;
-let a=document.getElementById('altura').value;
+let p=parseFloat(peso.value);
+let a=parseFloat(altura.value);
+
+if(!p||!a||a<=0){
+resIMC.innerHTML="Preencha corretamente";
+return;
+}
+
 let imc=p/(a*a);
+let [status, cor]=classificarIMC(imc);
 
-document.getElementById('resIMC').innerHTML="IMC: "+imc.toFixed(2);
+resIMC.innerHTML=`IMC: ${imc.toFixed(2)}<br>${status}`;
+resIMC.style.color=cor;
 
-let cor="green";
-if(imc<18.5) cor="blue";
-else if(imc<25) cor="green";
-else if(imc<30) cor="orange";
-else cor="red";
-
-dados.push(imc.toFixed(2));
+lista.push(imc.toFixed(2));
+labels.push("R"+lista.length);
 cores.push(cor);
-chart.data.labels.push("R"+dados.length);
-chart.update();
+
+grafico.update();
+atualizarStats();
 }
 
 function calcularCalorias(){
-let p=document.getElementById('pesoCal').value;
-let a=document.getElementById('alturaCal').value;
-let i=document.getElementById('idade').value;
-let cal=(10*p+6.25*a-5*i+5);
-document.getElementById('resCal').innerHTML=Math.floor(cal)+" kcal";
+let p=parseFloat(pesoCal.value);
+let a=parseFloat(alturaCal.value);
+let i=parseFloat(idade.value);
+let at=parseFloat(atividade.value);
+
+if(!p||!a||!i){
+resCal.innerHTML="Preencha corretamente";
+return;
+}
+
+resCal.innerHTML=Math.floor((10*p+6.25*a-5*i+5)*at)+" kcal/dia";
 }
 
 function calcularAgua(){
-let p=document.getElementById('pesoAgua').value;
-let agua=p*35;
-document.getElementById('resAgua').innerHTML=(agua/1000).toFixed(2)+"L";
+let p=parseFloat(pesoAgua.value);
+
+if(!p){
+resAgua.innerHTML="Preencha corretamente";
+return;
+}
+
+resAgua.innerHTML=(p*35/1000).toFixed(2)+" L/dia";
 }
 </script>
 
